@@ -10,12 +10,13 @@ from utils import angle_of_line, make_square, DataLogger
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--x_start', type=int, default=0, help='X of start')
-    parser.add_argument('--y_start', type=int, default=90, help='Y of start')
-    parser.add_argument('--psi_start', type=int, default=0, help='psi of start')
-    parser.add_argument('--x_end', type=int, default=90, help='X of end')
-    parser.add_argument('--y_end', type=int, default=80, help='Y of end')
-    parser.add_argument('--parking', type=int, default=1, help='park position in parking1 out of 24')
+    parser.add_argument('--x_start', type=int, default=0, help='стартовый X')
+    parser.add_argument('--y_start', type=int, default=90, help='стартовый Y')
+    parser.add_argument('--psi_start', type=int, default=0, help='стартовое направление')
+    parser.add_argument('--x_end', type=int, default=90, help='конечное Х')
+    parser.add_argument('--y_end', type=int, default=80, help='конечное Y')
+    parser.add_argument('--parking', type=int, default=1, help='свободное парковочное место (от 1 до 24)')
+    parser.add_argument('--add_more_walls', action=argparse.BooleanOptionalAction, help='добавление дополнительных заграждений')
 
     args = parser.parse_args()
     logger = DataLogger()
@@ -31,17 +32,12 @@ if __name__ == '__main__':
     parking1 = Parking1(args.parking)
     end, obs = parking1.generate_obstacles()
 
-    # add squares
-    # square1 = make_square(10,65,20)
-    # square2 = make_square(15,30,20)
-    # square3 = make_square(50,50,10)
-    # obs = np.vstack([obs,square1,square2,square3])
-
-    # Rahneshan logo
-    # start = np.array([50,5])
-    # end = np.array([35,67])
-    # rah = np.flip(cv2.imread('READ_ME/rahneshan_obstacle.png',0), axis=0)
-    # obs = np.vstack([np.where(rah<100)[1],np.where(rah<100)[0]]).T
+    if args.add_more_walls:
+        # add squares
+        square1 = make_square(10,65,20)
+        square2 = make_square(15,30,20)
+        square3 = make_square(50,50,10)
+        obs = np.vstack([obs,square1,square2,square3])
 
     # new_obs = np.array([[78,78],[79,79],[78,79]])
     # obs = np.vstack([obs,new_obs])
@@ -51,7 +47,6 @@ if __name__ == '__main__':
     my_car = Car_Dynamics(start[0], start[1], 0, np.deg2rad(args.psi_start), length=4, dt=0.2)
     MPC_HORIZON = 5
     controller = MPC_Controller()
-    # controller = Linear_MPC_Controller()
 
     res = env.render(my_car.x, my_car.y, my_car.psi, 0)
     cv2.imshow('Parking System', res)
@@ -83,7 +78,7 @@ if __name__ == '__main__':
     ################################## control ##################################################
     print('Движение к цели ...')
     for i,point in enumerate(final_path):
-        
+
             acc, delta = controller.optimize(my_car, final_path[i:i+MPC_HORIZON])
             my_car.update_state(my_car.move(acc,  delta))
             res = env.render(my_car.x, my_car.y, my_car.psi, delta)
