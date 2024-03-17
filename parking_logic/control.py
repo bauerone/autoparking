@@ -5,8 +5,8 @@ import copy
 
 class Car_Dynamics:
     def __init__(self, x_0, y_0, v_0, psi_0, length, dt):
-        self.dt = dt             # sampling time
-        self.L = length          # vehicle length
+        self.dt = dt
+        self.L = length
         self.x = x_0
         self.y = y_0
         self.v = v_0
@@ -63,22 +63,17 @@ class MPC_Controller:
         result = minimize(self.mpc_cost, args=(my_car, points), x0 = np.zeros((2*self.horiz)), method='SLSQP', bounds = bnd)
         return result.x[0],  result.x[1]
 
-
-
-######################################################################################################################################################################
-
 class Linear_MPC_Controller:
     def __init__(self):
         self.horiz = None
-        self.R = np.diag([0.01, 0.01])                 # input cost matrix
-        self.Rd = np.diag([0.01, 1.0])                 # input difference cost matrix
-        self.Q = np.diag([1.0, 1.0])                   # state cost matrix
-        self.Qf = self.Q                               # state final matrix
+        self.R = np.diag([0.01, 0.01])
+        self.Rd = np.diag([0.01, 1.0])
+        self.Q = np.diag([1.0, 1.0])
+        self.Qf = self.Q
         self.dt=0.2   
         self.L=4                          
 
     def make_model(self, v, psi, delta):        
-        # matrices
         # 4*4
         A = np.array([[1, 0, self.dt*np.cos(psi)         , -self.dt*v*np.sin(psi)],
                     [0, 1, self.dt*np.sin(psi)         , self.dt*v*np.cos(psi) ],

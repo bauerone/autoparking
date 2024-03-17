@@ -26,7 +26,7 @@ class DataLogger:
         self.u.append([acc, delta])
 
     def save_data(self):
-        os.makedirs('log results', exist_ok=True)
+        os.makedirs('log_results', exist_ok=True)
         t = np.arange(0,len(self.path)/5,0.2)
         self.path = np.array(self.path)
         self.car_state = np.array(self.car_state)
@@ -37,73 +37,73 @@ class DataLogger:
         plt.figure(figsize=(12,8))
         plt.plot(t, self.path[:,0], color='b', linewidth=5)
         plt.plot(t, self.car_state[:,0], color='r', linewidth=4)
-        plt.title('car\'s x in time',fontsize=20)
-        plt.xlabel('time (s)',fontsize=20)
-        plt.ylabel('x (m)',fontsize=20)
+        plt.title('положение автомобиля относительно по оси x относительно времени',fontsize=20)
+        plt.xlabel('время (секунды)',fontsize=20)
+        plt.ylabel('x (метры)',fontsize=20)
         plt.grid()
-        plt.legend(['reference', 'car\'s x'], prop=font) # using a named size
-        plt.savefig('log results/x.png')
+        plt.legend(['оптимальное положение', 'x автомобиля'], prop=font)
+        plt.savefig('log_results/x.png')
 
         # plot y
         plt.figure(figsize=(12,8))
         plt.plot(t, self.path[:,1], color='b', linewidth=5)
         plt.plot(t, self.car_state[:,1], color='r', linewidth=4)
-        plt.title('car\'s y in time',fontsize=20)
-        plt.xlabel('time (s)',fontsize=20)
-        plt.ylabel('y (m)',fontsize=20)
+        plt.title('положение автомобиля относительно по оси y относительно времени',fontsize=20)
+        plt.xlabel('время (секунды)',fontsize=20)
+        plt.ylabel('y (метры)',fontsize=20)
         plt.grid()
-        plt.legend(['reference', 'car\'s y'], prop=font) # using a named size
-        plt.savefig('log results/y.png')
+        plt.legend(['reference', 'car\'s y'], prop=font)
+        plt.savefig('log_results/y.png')
 
         # plot v
         plt.figure(figsize=(12,8))
         plt.plot(t, self.car_state[:,2], color='r', linewidth=4)
-        plt.title('car\'s speed in time',fontsize=20)
-        plt.xlabel('time (s)',fontsize=20)
-        plt.ylabel('v (m/s)',fontsize=20)
+        plt.title('скорость автомобиля относительно времени',fontsize=20)
+        plt.xlabel('время (секунды)',fontsize=20)
+        plt.ylabel('скорость (метры в секунды)',fontsize=20)
         plt.grid()
-        plt.legend(['car speed (m/s)'], prop=font) # using a named size
-        plt.savefig('log results/v.png')
+        plt.legend(['скорость авотомился (метры в секунду)'], prop=font)
+        plt.savefig('log_results/v.png')
 
         # plot psi
         plt.figure(figsize=(12,8))
         plt.plot(t, np.rad2deg(self.car_state[:,3]), color='r', linewidth=4)
-        plt.title('car\'s angle in time',fontsize=20)
-        plt.xlabel('time (s)',fontsize=20)
-        plt.ylabel('psi (degree)',fontsize=20)
+        plt.title('направление автомобиля относительно времени',fontsize=20)
+        plt.xlabel('время (секунды)',fontsize=20)
+        plt.ylabel('навпраление (градусы)',fontsize=20)
         plt.grid()
-        plt.legend(['car angle (degree)'], prop=font) # using a named size
-        plt.savefig('log results/psi.png')
+        plt.legend(['направление автомобиля (градусы)'], prop=font)
+        plt.savefig('log_results/psi.png')
 
         # plot position
         plt.figure(figsize=(12,12))
         plt.plot(self.path[:,0], self.path[:,1], color='b', linewidth=5)
         plt.plot(self.car_state[:,0], self.car_state[:,1], color='r', linewidth=4)
-        plt.title('car\'s position in time',fontsize=20)
-        plt.xlabel('x (m)',fontsize=20)
-        plt.ylabel('y (m)',fontsize=20)
+        plt.title('позиция автомобиля относительно времени',fontsize=20)
+        plt.xlabel('x (метры)',fontsize=20)
+        plt.ylabel('y (метры)',fontsize=20)
         plt.grid()
-        plt.legend(['reference','car\'s position'], prop=font) # using a named size
-        plt.savefig('log results/position.png')
+        plt.legend(['оптимальное пложение','положение автомобиля'], prop=font)
+        plt.savefig('log_results/position.png')
 
         # plot accelerate
         plt.figure(figsize=(12,8))
         plt.plot(t, self.u[:,0], color='r', linewidth=4)
-        plt.title('car\'s accelerate in time',fontsize=20)
-        plt.xlabel('time (s)',fontsize=20)
-        plt.ylabel('accelerate (m^2/s)',fontsize=20)
+        plt.title('ускорение автомобиля относительно времени',fontsize=20)
+        plt.xlabel('время (секунды)',fontsize=20)
+        plt.ylabel('ускорение (метр^2/секунды)',fontsize=20)
         plt.grid()
-        plt.legend(['car accelerate (m^2/s)'], prop=font) # using a named size
-        plt.savefig('log results/accelerate.png')
+        plt.legend(['ускорение автомобиля (метр^2/секунды)'], prop=font)
+        plt.savefig('log_results/accelerate.png')
 
         # plot delta
         plt.figure(figsize=(12,8))
         plt.plot(t, np.rad2deg(self.u[:,1]), color='r', linewidth=4)
-        plt.title('car\'s steer in time',fontsize=20)
-        plt.xlabel('time (s)',fontsize=20)
-        plt.ylabel('steer (degree)',fontsize=20)
+        plt.title('угол поворота автомобился относительно времени',fontsize=20)
+        plt.xlabel('время (секунды)',fontsize=20)
+        plt.ylabel('поворот (градусы)',fontsize=20)
         plt.grid()
-        plt.legend(['car steer (degree)'], prop=font) # using a named size
-        plt.savefig('log results/steer.png')
+        plt.legend(['угол поворота автомобиля (градусы)'], prop=font)
+        plt.savefig('log_results/steer.png')
 
-        print('all data saved on log results ...')
+        print('Все данные сохранены в директорию логирования ...')

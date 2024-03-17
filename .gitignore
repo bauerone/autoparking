@@ -1,3 +1,3 @@
 *.pt
 **/__pycache__/
-**/log results/
+**/log_results/

@@ -4,7 +4,6 @@ import numpy as np
 class Environment:
     def __init__(self,obstacles):
         self.margin = 5
-        #coordinates are in [x,y] format
         self.car_length = 80
         self.car_width = 40
         self.wheel_length = 15

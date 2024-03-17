@@ -3,9 +3,6 @@ import math
 import scipy.interpolate as scipy_interpolate
 from utils import angle_of_line
 
-
-############################################## Functions ######################################################
-
 def interpolate_b_spline_path(x, y, n_path_points, degree=3):
     ipl_t = np.linspace(0.0, len(x) - 1, len(x))
     spl_i_x = scipy_interpolate.make_interp_spline(ipl_t, x, k=degree)
@@ -22,7 +19,6 @@ def interpolate_path(path, sample_rate):
     n_course_point = len(path)*3
     rix, riy = interpolate_b_spline_path(way_point_x, way_point_y, n_course_point)
     new_path = np.vstack([rix,riy]).T
-    # new_path[new_path<0] = 0
     return new_path
 
 ################################################ Path Planner ################################################
@@ -30,15 +26,6 @@ def interpolate_path(path, sample_rate):
 class AStarPlanner:
 
     def __init__(self, ox, oy, resolution, rr):
-        """
-        Initialize grid map for a star planning
-
-        ox: x position list of Obstacles [m]
-        oy: y position list of Obstacles [m]
-        resolution: grid resolution [m]
-        rr: robot radius[m]
-        """
-
         self.resolution = resolution
         self.rr = rr
         self.min_x, self.min_y = 0, 0
@@ -60,20 +47,6 @@ class AStarPlanner:
                 self.cost) + "," + str(self.parent_index)
 
     def planning(self, sx, sy, gx, gy):
-        """
-        A star path search
-
-        input:
-            s_x: start x position [m]
-            s_y: start y position [m]
-            gx: goal x position [m]
-            gy: goal y position [m]
-
-        output:
-            rx: x position list of the final path
-            ry: y position list of the final path
-        """
-
         start_node = self.Node(self.calc_xy_index(sx, self.min_x),
                                self.calc_xy_index(sy, self.min_y), 0.0, -1)
         goal_node = self.Node(self.calc_xy_index(gx, self.min_x),
@@ -84,7 +57,7 @@ class AStarPlanner:
 
         while 1:
             if len(open_set) == 0:
-                print("Open set is empty..")
+                print("Базовый набор пуст..")
                 break
 
             c_id = min(
@@ -95,25 +68,21 @@ class AStarPlanner:
             current = open_set[c_id]
 
             if current.x == goal_node.x and current.y == goal_node.y:
-                print("Find goal")
+                print("Поиск цели")
                 goal_node.parent_index = current.parent_index
                 goal_node.cost = current.cost
                 break
 
-            # Remove the item from the open set
             del open_set[c_id]
 
-            # Add it to the closed set
             closed_set[c_id] = current
 
-            # expand_grid search grid based on motion model
             for i, _ in enumerate(self.motion):
                 node = self.Node(current.x + self.motion[i][0],
                                  current.y + self.motion[i][1],
                                  current.cost + self.motion[i][2], c_id)
                 n_id = self.calc_grid_index(node)
 
-                # If the node is not safe, do nothing
                 if not self.verify_node(node):
                     continue
 
@@ -121,10 +90,9 @@ class AStarPlanner:
                     continue
 
                 if n_id not in open_set:
-                    open_set[n_id] = node  # discovered a new node
+                    open_set[n_id] = node
                 else:
                     if open_set[n_id].cost > node.cost:
-                        # This path is the best until now. record it
                         open_set[n_id] = node
 
         rx, ry = self.calc_final_path(goal_node, closed_set)
@@ -132,7 +100,6 @@ class AStarPlanner:
         return rx, ry
 
     def calc_final_path(self, goal_node, closed_set):
-        # generate final course
         rx, ry = [self.calc_grid_position(goal_node.x, self.min_x)], [
             self.calc_grid_position(goal_node.y, self.min_y)]
         parent_index = goal_node.parent_index
@@ -146,18 +113,11 @@ class AStarPlanner:
 
     @staticmethod
     def calc_heuristic(n1, n2):
-        w = 1.0  # weight of heuristic
+        w = 1.0
         d = w * math.hypot(n1.x - n2.x, n1.y - n2.y)
         return d
 
     def calc_grid_position(self, index, min_position):
-        """
-        calc grid position
-
-        :param index:
-        :param min_position:
-        :return:
-        """
         pos = index * self.resolution + min_position
         return pos
 
@@ -180,7 +140,6 @@ class AStarPlanner:
         elif py >= self.max_y:
             return False
 
-        # collision check
         if self.obstacle_map[node.x][node.y]:
             return False
 
@@ -196,7 +155,6 @@ class AStarPlanner:
         self.x_width = round((self.max_x - self.min_x) / self.resolution)
         self.y_width = round((self.max_y - self.min_y) / self.resolution)
 
-        # obstacle map generation
         self.obstacle_map = [[False for _ in range(self.y_width)]
                              for _ in range(self.x_width)]
         for ix in range(self.x_width):
@@ -211,7 +169,6 @@ class AStarPlanner:
 
     @staticmethod
     def get_motion_model():
-        # dx, dy, cost
         motion = [[1, 0, 1],
                   [0, 1, 1],
                   [-1, 0, 1],
@@ -227,7 +184,6 @@ class AStarPlanner:
 class PathPlanning:
     def __init__(self,obstacles):
         self.margin = 5
-        #sacale obstacles from env margin to pathplanning margin
         obstacles = obstacles + np.array([self.margin,self.margin])
         obstacles = obstacles[(obstacles[:,0]>=0) & (obstacles[:,1]>=0)]
 
@@ -250,12 +206,10 @@ class PathPlanning:
         path = np.vstack([rx,ry]).T
         return path[::-1]
 
-############################################### Park Path Planner #################################################
 
 class ParkPathPlanning:
     def __init__(self,obstacles):
         self.margin = 5
-        #sacale obstacles from env margin to pathplanning margin
         obstacles = obstacles + np.array([self.margin,self.margin])
         obstacles = obstacles[(obstacles[:,0]>=0) & (obstacles[:,1]>=0)]
 
