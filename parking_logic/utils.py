@@ -62,7 +62,7 @@ class DataLogger:
         plt.xlabel('время (секунды)',fontsize=20)
         plt.ylabel('скорость (метры в секунды)',fontsize=20)
         plt.grid()
-        plt.legend(['скорость авотомился (метры в секунду)'], prop=font)
+        plt.legend(['скорость автомобиля (метры в секунду)'], prop=font)
         plt.savefig('log_results/v.png')
 
         # plot psi
@@ -99,7 +99,7 @@ class DataLogger:
         # plot delta
         plt.figure(figsize=(12,8))
         plt.plot(t, np.rad2deg(self.u[:,1]), color='r', linewidth=4)
-        plt.title('угол поворота автомобился относительно времени',fontsize=20)
+        plt.title('угол поворота автомобиля относительно времени',fontsize=20)
         plt.xlabel('время (секунды)',fontsize=20)
         plt.ylabel('поворот (градусы)',fontsize=20)
         plt.grid()
